@@ -87,6 +87,7 @@ class GetStatementCommand extends Command
         $companies = DB::table('companies')
             ->select('id', 'user_id', 'fantasy_name', 'subseller_getnet_id', 'subseller_getnet_homolog_id')
             ->whereNotNull('subseller_getnet_id')
+            ->where('get_net_status', 1)
             ->get();
         
         foreach ($companies as $company) {
