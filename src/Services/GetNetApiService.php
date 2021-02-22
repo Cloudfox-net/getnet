@@ -112,7 +112,7 @@ class GetNetApiService
             
             if (isset($data->adjustments)) {
                 
-                //$this->saveFromAdjustment($data->adjustments);
+                $this->saveFromAdjustment($data->adjustments);
             }
             
             $this->getnetSearch->ended_at = Carbon::now();
@@ -375,15 +375,23 @@ class GetNetApiService
     private function getHashIdFromOrderId($order_id)
     {
         
-        $parts = explode('-', $order_id);
-        $hashId = $parts[0];
-        $saleId = current(Hashids::connection('sale_id')->decode($parts[0]));
+        if($order_id){
+    
+            $parts = explode('-', $order_id);
+            $hashId = $parts[0];
+            $saleId = current(Hashids::connection('sale_id')->decode($parts[0]));
+        }
+        else {
+    
+            $hashId = $saleId = null;
+        }
         
         return ['hash_id' => $hashId, 'sale_id' => $saleId];
     }
     
-    private function saveFromAdjustment()
+    private function saveFromAdjustment($adjustments)
     {
+        
         /*if ($subseller_id) {
             
             $this->getnetSearch->adjustments_node = json_encode($data->adjustments);
@@ -392,7 +400,7 @@ class GetNetApiService
             $this->getnetSearch->adjustments_node = 'IGNORANDO';
         }*/
         
-        $this->getnetSearch->adjustments_count = count($data->adjustments);
+        $this->getnetSearch->adjustments_count = count($adjustments);
         
         $this->getnetSearch->save();
         
@@ -400,8 +408,38 @@ class GetNetApiService
         $count = 0;
         $percentage = 0;
         print_r("\r\n" . ' - Percorrer ' . $this->getnetSearch->adjustments_count . ' adjustments' . "\r\n");
+    
+        /*
+            +"type_register": 4
+            +"bank": "77"
+            +"agency": "1"
+            +"account_number": "9046167-3"
+            +"account_type": "C"
+            +"marketplace_subsellerid": "700116896"
+            +"adjustment_origin": "M"
+            +"marketplace_schedule_id": 107373656
+            +"nu_liquid": "202101200000849576960"
+            +"merchand_id": "7762088"
+            +"cpfcnpj_subseller": "36492375000163"
+            +"cnpj_marketplace": "34109335000164"
+            +"adjustment_id": 1191211
+            +"adjustment_type": 2
+            +"adjustment_date": "2021-01-07T16:03:35"
+            +"adjustment_amount": 1000
+            +"subseller_rate_closing_date": "2021-01-20T00:00:00"
+            +"subseller_rate_confirm_date": "2021-01-21T00:00:00"
+            +"payment_date": "2021-01-11T00:00:00"
+            +"transaction_sign": "-"
+            +"adjustment_reason": "Teste com Júlio"
+            +"order_id": null
+            +"product_id": 0
+            +"our_number": null
+            +"nsu_boleto_adjustment": null
+        */
+    
+        $getnetTransactionService = new GetnetTransactionService();
         
-        foreach ($data->adjustments as $adjustment) {
+        foreach ($adjustments as $adjustment) {
             
             $count++;
             
@@ -413,11 +451,48 @@ class GetNetApiService
                 print_r(' - ' . $percentage . '%' . "                   ");
             }
             
-            $statementAdjustment = new StatementAdjustment();
-            $statementAdjustment->statement_search_id = $this->getnetSearch->id;
-            $statementAdjustment->fill((array)$adjustment);
-            $statementAdjustment->data = json_encode($adjustment);
-            $statementAdjustment->save();
+            $company_id = $this->companyId;
+            $order_id = $adjustment->order_id;
+            $sale_id = $this->getHashIdFromOrderId($order_id)['sale_id'];
+            $hash_id = $this->getHashIdFromOrderId($order_id)['hash_id'];
+            $type = $getnetTransactionService->getAdjustmentStatus($adjustment->transaction_sign);
+            //$type = TransactionTypeConstant::WRONG;
+            $type_register = TypeRegisterConstant::TYPE_REGISTER_ADJUST;
+            $status_code = null;
+            $bank = $adjustment->bank;
+            $agency = $adjustment->agency;
+            $account_number = $adjustment->account_number;
+            $release_status = null;
+            $transaction_date = $adjustment->adjustment_date;
+            $confirmation_date = null;
+            $amount = $adjustment->adjustment_amount;
+            $payment_date = $adjustment->payment_date;
+            $subseller_rate_closing_date = $adjustment->subseller_rate_closing_date;
+            $subseller_rate_confirm_date = $adjustment->subseller_rate_confirm_date;
+            $transaction_sign = $adjustment->transaction_sign;
+            $adjustment_id = $adjustment->adjustment_id;
+            
+            (new GetnetTransactionService())->saveAdjustments([
+                'company_id' => $company_id,
+                'sale_id' => $sale_id,
+                'order_id' => $order_id,
+                'hash_id' => $hash_id,
+                'type' => $type,
+                'type_register' => $type_register,
+                'status_code' => $status_code,
+                'bank' => $bank,
+                'agency' => $agency,
+                'account_number' => $account_number,
+                'release_status' => $release_status,
+                'transaction_date' => $transaction_date,
+                'confirmation_date' => $confirmation_date,
+                'amount' => $amount,
+                'payment_date' => $payment_date,
+                'subseller_rate_closing_date' => $subseller_rate_closing_date,
+                'subseller_rate_confirm_date' => $subseller_rate_confirm_date,
+                'transaction_sign' => $transaction_sign,
+                'adjustment_id' => $adjustment_id,
+            ]);
         }
     }
 }

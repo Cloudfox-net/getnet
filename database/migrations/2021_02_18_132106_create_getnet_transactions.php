@@ -21,11 +21,12 @@ class CreateGetnetTransactions extends Migration
             $table->integer('company_id')->unsigned()->nullable();
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('restrict');
             $table->biginteger('sale_id')->unsigned()->nullable();
-            //$table->foreign('sale_id')->references('id')->on('sales')->onDelete('restrict');
+            $table->foreign('sale_id')->references('id')->on('sales')->onDelete('restrict');
+            $table->string('adjustment_id')->nullable();
     
             $table->string('hash_id')->nullable();
             $table->string('order_id')->nullable();
-            
+    
             $table->enum('type', [
                 TransactionTypeConstant::WAITING_FOR_VALID_POST,
                 TransactionTypeConstant::WAITING_LIQUIDATION,
@@ -80,20 +81,20 @@ class CreateGetnetTransactions extends Migration
             99 Negado - MGM.
              * */
             $table->enum('status_code', [
-StatusCodeConstant::STATUS_CODE_APPROVED,
-StatusCodeConstant::STATUS_CODE_WAITING,
-StatusCodeConstant::STATUS_CODE_PENDING,
-StatusCodeConstant::STATUS_CODE_PENDING_PAYMENT,
-StatusCodeConstant::STATUS_CODE_TIMEOUT,
-StatusCodeConstant::STATUS_CODE_UNDONE,
-StatusCodeConstant::STATUS_CODE_NONEXISTENT,
-StatusCodeConstant::STATUS_CODE_ADMINISTRATOR_DENIED,
-StatusCodeConstant::STATUS_CODE_RETURNED,
-StatusCodeConstant::STATUS_CODE_REPEATED,
-StatusCodeConstant::STATUS_CODE_CONCILIATION_REVERSED,
-StatusCodeConstant::STATUS_CODE_CANCELED_WITHOUT_CONFIRMATION,
-StatusCodeConstant::STATUS_CODE_DENIED_MGM,
-            ]);
+                StatusCodeConstant::STATUS_CODE_APPROVED,
+                StatusCodeConstant::STATUS_CODE_WAITING,
+                StatusCodeConstant::STATUS_CODE_PENDING,
+                StatusCodeConstant::STATUS_CODE_PENDING_PAYMENT,
+                StatusCodeConstant::STATUS_CODE_TIMEOUT,
+                StatusCodeConstant::STATUS_CODE_UNDONE,
+                StatusCodeConstant::STATUS_CODE_NONEXISTENT,
+                StatusCodeConstant::STATUS_CODE_ADMINISTRATOR_DENIED,
+                StatusCodeConstant::STATUS_CODE_RETURNED,
+                StatusCodeConstant::STATUS_CODE_REPEATED,
+                StatusCodeConstant::STATUS_CODE_CONCILIATION_REVERSED,
+                StatusCodeConstant::STATUS_CODE_CANCELED_WITHOUT_CONFIRMATION,
+                StatusCodeConstant::STATUS_CODE_DENIED_MGM,
+            ])->nullable();
             $table->string('bank')->nullable();
             $table->string('agency')->nullable();
             $table->string('account_number')->nullable();

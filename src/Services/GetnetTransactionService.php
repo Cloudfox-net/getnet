@@ -73,6 +73,52 @@ class GetnetTransactionService
         $getnetTransaction->transaction_sign = $data['transaction_sign'] ?? null;*/
     }
     
+    public function saveAdjustments($data)
+    {
+        
+        $getnetTransaction = GetnetTransaction::updateOrCreate(
+            [
+                'adjustment_id' => $data['adjustment_id'],
+            ],
+            [
+                'company_id' => $data['company_id'],
+                'sale_id' => $data['sale_id'],
+                'order_id' => $data['order_id'],
+                'hash_id' => $data['hash_id'],
+                'type' => $data['type'],
+                'type_register' => $data['type_register'],
+                'status_code' => $data['status_code'],
+                'bank' => $data['bank'],
+                'agency' => $data['agency'],
+                'account_number' => $data['account_number'],
+                'release_status' => $data['release_status'],
+                'transaction_date' => $data['transaction_date'] ? Carbon::parse($data['transaction_date'])->format('Y-m-d H:i:s') : null,
+                'confirmation_date' => $data['confirmation_date'] ? Carbon::parse($data['confirmation_date'])->format('Y-m-d H:i:s') : null,
+                'amount' => $data['amount'],
+                'payment_date' => $data['payment_date'] ? Carbon::parse($data['payment_date'])->format('Y-m-d H:i:s') : null,
+                'subseller_rate_closing_date' => $data['subseller_rate_closing_date'] ? Carbon::parse($data['subseller_rate_closing_date'])->format('Y-m-d H:i:s') : null,
+                'subseller_rate_confirm_date' => $data['subseller_rate_confirm_date'] ? Carbon::parse($data['subseller_rate_confirm_date'])->format('Y-m-d H:i:s') : null,
+                'transaction_sign' => $data['transaction_sign'],
+            ]
+        );
+        
+        if($getnetTransaction->getChanges()){
+    
+            //dd($getnetTransaction->getChanges(), $getnetTransaction->toArray());
+            print("\r\n");
+            print($getnetTransaction->id);
+            print("\r\n");
+            print_r($getnetTransaction->getChanges());
+            print("\r\n");
+        }
+    }
+    
+    public function getAdjustmentStatus($sign)
+    {
+        
+        return $sign == '-' ? TransactionTypeConstant::ADJUSTMENT_DEBIT : TransactionTypeConstant::ADJUSTMENT_CREDIT;
+    }
+    
     public function getStatus($summary, $details, $saleId)
     {
         
