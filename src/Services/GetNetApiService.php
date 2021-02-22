@@ -174,13 +174,13 @@ class GetNetApiService
     {
         
         
-        if ($this->subSellerId) {
+        /*if ($this->subSellerId) {
             
             $this->getnetSearch->list_transactions_node = json_encode($listTransactions);
         } else {
             
             $this->getnetSearch->list_transactions_node = 'IGNORANDO';
-        }
+        }*/
         
         $this->getnetSearch->list_transactions_count = count($listTransactions);
         
@@ -384,13 +384,13 @@ class GetNetApiService
     
     private function saveFromAdjustment()
     {
-        if ($subseller_id) {
+        /*if ($subseller_id) {
             
             $this->getnetSearch->adjustments_node = json_encode($data->adjustments);
         } else {
             
             $this->getnetSearch->adjustments_node = 'IGNORANDO';
-        }
+        }*/
         
         $this->getnetSearch->adjustments_count = count($data->adjustments);
         
