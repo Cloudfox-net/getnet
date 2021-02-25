@@ -21,8 +21,8 @@ class CreateGetnetTransactions extends Migration
             $table->integer('company_id')->unsigned()->nullable();
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('restrict');
             $table->biginteger('sale_id')->unsigned()->nullable();
-            $table->foreign('sale_id')->references('id')->on('sales')->onDelete('restrict');
             $table->string('adjustment_id')->nullable();
+            $table->foreign('sale_id')->references('id')->on('sales')->onDelete('restrict');
     
             $table->string('hash_id')->nullable();
             $table->string('order_id')->nullable();

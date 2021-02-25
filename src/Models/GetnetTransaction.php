@@ -9,6 +9,7 @@ class GetnetTransaction extends Model
     
     public $fillable = [
         'company_id',
+        'adjustment_id',
         'sale_id',
         'order_id',
         'hash_id',
