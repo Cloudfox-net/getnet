@@ -39,6 +39,7 @@ class GetnetTransactionService
                 'payment_date' => $data['payment_date'] ? Carbon::parse($data['payment_date'])->format('Y-m-d H:i:s') : null,
                 'subseller_rate_closing_date' => $data['subseller_rate_closing_date'] ? Carbon::parse($data['subseller_rate_closing_date'])->format('Y-m-d H:i:s') : null,
                 'subseller_rate_confirm_date' => $data['subseller_rate_confirm_date'] ? Carbon::parse($data['subseller_rate_confirm_date'])->format('Y-m-d H:i:s') : null,
+                'description' => $data['description'],
             ]
         );
         
@@ -99,6 +100,7 @@ class GetnetTransactionService
                 'subseller_rate_closing_date' => $data['subseller_rate_closing_date'] ? Carbon::parse($data['subseller_rate_closing_date'])->format('Y-m-d H:i:s') : null,
                 'subseller_rate_confirm_date' => $data['subseller_rate_confirm_date'] ? Carbon::parse($data['subseller_rate_confirm_date'])->format('Y-m-d H:i:s') : null,
                 'transaction_sign' => $data['transaction_sign'],
+                'description' => $data['description'],
             ]
         );
         

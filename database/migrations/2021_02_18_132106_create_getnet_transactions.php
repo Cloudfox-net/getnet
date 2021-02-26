@@ -106,6 +106,7 @@ class CreateGetnetTransactions extends Migration
             $table->dateTime('subseller_rate_closing_date')->nullable();
             $table->dateTime('subseller_rate_confirm_date')->nullable();
             $table->string('transaction_sign')->nullable();
+            $table->string('description')->nullable();
             //$table->string('payment_id')->nullable();
             $table->timestamps();
         });

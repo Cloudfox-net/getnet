@@ -27,5 +27,6 @@ class GetnetTransaction extends Model
         'subseller_rate_closing_date',
         'subseller_rate_confirm_date',
         'transaction_sign',
+        'description',
     ];
 }

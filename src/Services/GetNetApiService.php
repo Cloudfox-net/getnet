@@ -322,6 +322,7 @@ class GetNetApiService
             $subseller_rate_closing_date = $details->subseller_rate_closing_date;
             $subseller_rate_confirm_date = $details->subseller_rate_confirm_date;
             $transaction_sign = $details->transaction_sign;
+            $description = 'Transação #' . $hash_id;
             
             (new GetnetTransactionService())->save([
                 'company_id' => $company_id,
@@ -342,6 +343,7 @@ class GetNetApiService
                 'subseller_rate_closing_date' => $subseller_rate_closing_date,
                 'subseller_rate_confirm_date' => $subseller_rate_confirm_date,
                 'transaction_sign' => $transaction_sign,
+                'description' => $description,
             ]);
             
             /*if (isset($transaction->summary)) {
@@ -375,14 +377,13 @@ class GetNetApiService
     private function getHashIdFromOrderId($order_id)
     {
         
-        if($order_id){
-    
+        if ($order_id) {
+            
             $parts = explode('-', $order_id);
             $hashId = $parts[0];
             $saleId = current(Hashids::connection('sale_id')->decode($parts[0]));
-        }
-        else {
-    
+        } else {
+            
             $hashId = $saleId = null;
         }
         
@@ -408,7 +409,7 @@ class GetNetApiService
         $count = 0;
         $percentage = 0;
         print_r("\r\n" . ' - Percorrer ' . $this->getnetSearch->adjustments_count . ' adjustments' . "\r\n");
-    
+        
         /*
             +"type_register": 4
             +"bank": "77"
@@ -436,7 +437,7 @@ class GetNetApiService
             +"our_number": null
             +"nsu_boleto_adjustment": null
         */
-    
+        
         $getnetTransactionService = new GetnetTransactionService();
         
         foreach ($adjustments as $adjustment) {
@@ -471,6 +472,7 @@ class GetNetApiService
             $subseller_rate_confirm_date = $adjustment->subseller_rate_confirm_date;
             $transaction_sign = $adjustment->transaction_sign;
             $adjustment_id = $adjustment->adjustment_id;
+            $description = $adjustment->adjustment_reason;
             
             (new GetnetTransactionService())->saveAdjustments([
                 'company_id' => $company_id,
@@ -492,6 +494,7 @@ class GetNetApiService
                 'subseller_rate_confirm_date' => $subseller_rate_confirm_date,
                 'transaction_sign' => $transaction_sign,
                 'adjustment_id' => $adjustment_id,
+                'description' => $description,
             ]);
         }
     }
