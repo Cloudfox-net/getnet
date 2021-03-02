@@ -5,6 +5,7 @@ namespace CloudFox\GetNet;
 use CloudFox\GetNet\Console\GetStatementCommand;
 use CloudFox\GetNet\Console\GetStatementForCompanyCommand;
 use CloudFox\GetNet\Console\InstallCommand;
+use CloudFox\GetNet\Console\TruncateGetNetStatementCommand;
 use Illuminate\Support\ServiceProvider;
 
 class GetNetServiceProvider extends ServiceProvider
@@ -49,6 +50,7 @@ class GetNetServiceProvider extends ServiceProvider
                 InstallCommand::class,
                 GetStatementCommand::class,
                 GetStatementForCompanyCommand::class,
+                TruncateGetNetStatementCommand::class,
             ]);
         }
     }

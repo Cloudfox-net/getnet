@@ -452,50 +452,54 @@ class GetNetApiService
                 print_r(' - ' . $percentage . '%' . "                   ");
             }
             
-            $company_id = $this->companyId;
-            $order_id = $adjustment->order_id;
-            $sale_id = $this->getHashIdFromOrderId($order_id)['sale_id'];
-            $hash_id = $this->getHashIdFromOrderId($order_id)['hash_id'];
-            $type = $getnetTransactionService->getAdjustmentStatus($adjustment->transaction_sign);
-            //$type = TransactionTypeConstant::WRONG;
-            $type_register = TypeRegisterConstant::TYPE_REGISTER_ADJUST;
-            $status_code = null;
-            $bank = $adjustment->bank;
-            $agency = $adjustment->agency;
-            $account_number = $adjustment->account_number;
-            $release_status = null;
-            $transaction_date = $adjustment->adjustment_date;
-            $confirmation_date = null;
-            $amount = $adjustment->adjustment_amount;
-            $payment_date = $adjustment->payment_date;
-            $subseller_rate_closing_date = $adjustment->subseller_rate_closing_date;
-            $subseller_rate_confirm_date = $adjustment->subseller_rate_confirm_date;
-            $transaction_sign = $adjustment->transaction_sign;
-            $adjustment_id = $adjustment->adjustment_id;
-            $description = $adjustment->adjustment_reason;
+            if ($adjustment->cnpj_marketplace != $adjustment->cpfcnpj_subseller) {
+                
+                $company_id = $this->companyId;
+                $order_id = $adjustment->order_id;
+                $sale_id = $this->getHashIdFromOrderId($order_id)['sale_id'];
+                $hash_id = $this->getHashIdFromOrderId($order_id)['hash_id'];
+                $type = $getnetTransactionService->getAdjustmentStatus($adjustment->transaction_sign);
+                //$type = TransactionTypeConstant::WRONG;
+                $type_register = TypeRegisterConstant::TYPE_REGISTER_ADJUST;
+                $status_code = null;
+                $bank = $adjustment->bank;
+                $agency = $adjustment->agency;
+                $account_number = $adjustment->account_number;
+                $release_status = null;
+                $transaction_date = $adjustment->adjustment_date;
+                $confirmation_date = null;
+                $amount = $adjustment->adjustment_amount;
+                $payment_date = $adjustment->payment_date;
+                $subseller_rate_closing_date = $adjustment->subseller_rate_closing_date;
+                $subseller_rate_confirm_date = $adjustment->subseller_rate_confirm_date;
+                $transaction_sign = $adjustment->transaction_sign;
+                $adjustment_id = $adjustment->adjustment_id;
+                $description = $adjustment->adjustment_reason;
+                
+                (new GetnetTransactionService())->saveAdjustments([
+                    'company_id' => $company_id,
+                    'sale_id' => $sale_id,
+                    'order_id' => $order_id,
+                    'hash_id' => $hash_id,
+                    'type' => $type,
+                    'type_register' => $type_register,
+                    'status_code' => $status_code,
+                    'bank' => $bank,
+                    'agency' => $agency,
+                    'account_number' => $account_number,
+                    'release_status' => $release_status,
+                    'transaction_date' => $transaction_date,
+                    'confirmation_date' => $confirmation_date,
+                    'amount' => $amount,
+                    'payment_date' => $payment_date,
+                    'subseller_rate_closing_date' => $subseller_rate_closing_date,
+                    'subseller_rate_confirm_date' => $subseller_rate_confirm_date,
+                    'transaction_sign' => $transaction_sign,
+                    'adjustment_id' => $adjustment_id,
+                    'description' => $description,
+                ]);
+            }
             
-            (new GetnetTransactionService())->saveAdjustments([
-                'company_id' => $company_id,
-                'sale_id' => $sale_id,
-                'order_id' => $order_id,
-                'hash_id' => $hash_id,
-                'type' => $type,
-                'type_register' => $type_register,
-                'status_code' => $status_code,
-                'bank' => $bank,
-                'agency' => $agency,
-                'account_number' => $account_number,
-                'release_status' => $release_status,
-                'transaction_date' => $transaction_date,
-                'confirmation_date' => $confirmation_date,
-                'amount' => $amount,
-                'payment_date' => $payment_date,
-                'subseller_rate_closing_date' => $subseller_rate_closing_date,
-                'subseller_rate_confirm_date' => $subseller_rate_confirm_date,
-                'transaction_sign' => $transaction_sign,
-                'adjustment_id' => $adjustment_id,
-                'description' => $description,
-            ]);
         }
     }
 }
