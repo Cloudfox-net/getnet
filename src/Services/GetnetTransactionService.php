@@ -131,7 +131,7 @@ class GetnetTransactionService
         $transactionStatusCode = StatusCodeConstant::convertToDatabase($summary->transaction_status_code);
         
         $hasValidTracking = false;
-        if ($saleId) {
+        if ($saleId && !$this->isDigitalProduct($summary->order_id)) {
             
             $hasValidTracking = (boolean)Redis::connection('redis-statement')->get("sale:has:tracking:{$saleId}");
         }
@@ -182,5 +182,14 @@ class GetnetTransactionService
             
             return TransactionTypeConstant::WRONG;
         }
+    }
+    
+    private function isDigitalProduct($orderId): bool
+    {
+        
+        $findTextDigital = '-D';
+        $isDigital = strpos($orderId, $findTextDigital);
+        
+        return $isDigital !== false;
     }
 }
