@@ -374,6 +374,29 @@ class GetNetApiService
         }
     }
     
+    private function findSaleFromReason($adjustmentReason){
+    
+        $findTextChargeBack = 'Chargeback da venda #';
+        $findTextReverse = 'Estorno da venda:';
+    
+        $adjustIsChargeBack = strpos($adjustmentReason, $findTextChargeBack);
+        $adjustIsReverse = strpos($adjustmentReason, $findTextReverse);
+    
+        if ($adjustIsChargeBack !== false || $adjustIsReverse !== false) {
+        
+            $hashId = explode('#', $adjustmentReason);
+        
+            if (count($hashId) == 2) {
+    
+                $hashId = $hashId[1];
+                
+                $saleId = current(Hashids::connection('sale_id')->decode($hashId));
+            }
+        }
+    
+        return ['hash_id' => $hashId ?? null, 'sale_id' => $saleId ?? null];
+    }
+    
     private function getHashIdFromOrderId($order_id)
     {
         
@@ -455,9 +478,9 @@ class GetNetApiService
             if ($adjustment->cnpj_marketplace != $adjustment->cpfcnpj_subseller) {
                 
                 $company_id = $this->companyId;
-                $order_id = $adjustment->order_id;
-                $sale_id = $this->getHashIdFromOrderId($order_id)['sale_id'];
-                $hash_id = $this->getHashIdFromOrderId($order_id)['hash_id'];
+                $order_id = null;
+                $sale_id = $this->findSaleFromReason($adjustment->adjustment_reason)['sale_id'];
+                $hash_id = $this->findSaleFromReason($adjustment->adjustment_reason)['hash_id'];
                 $type = $getnetTransactionService->getAdjustmentStatus($adjustment->transaction_sign);
                 //$type = TransactionTypeConstant::WRONG;
                 $type_register = TypeRegisterConstant::TYPE_REGISTER_ADJUST;
